@@ -6,6 +6,8 @@ import { Construct } from "constructs";
 import * as apig from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as node from "aws-cdk-lib/aws-lambda-nodejs";
+import { drivers, teams } from "../seed/teams";
+import { generateBatch } from "../shared/util";
 
 type AppApiProps = {
   userPoolId: string;
@@ -15,6 +17,8 @@ type AppApiProps = {
 export class AppApi extends Construct {
   constructor(scope: Construct, id: string, props: AppApiProps) {
     super(scope, id);
+
+    // TABLES
 
     // Teams table
     const teamsTable = new dynamodb.Table(this, "TeamsTable", {
@@ -29,6 +33,26 @@ export class AppApi extends Construct {
       sortKey: { name: "driverId", type: dynamodb.AttributeType.NUMBER },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+    });
+
+    // MARSHALLING DATA FOR TABLES
+    new custom.AwsCustomResource(this, "TeamsTableInitData", {
+      onCreate: {
+        service: "DynamoDB",
+        action: "batchWriteItem",
+        parameters: {
+          RequestItems: {
+            [teamsTable.tableName]: generateBatch(teams),
+            [driversTable.tableName]: generateBatch(drivers),
+          },
+        },
+        physicalResourceId: custom.PhysicalResourceId.of(
+          "TeamsDriversTableInitData"
+        ),
+      },
+      policy: custom.AwsCustomResourcePolicy.fromSdkCalls({
+        resources: [teamsTable.tableArn, driversTable.tableArn],
+      }),
     });
 
     const appApi = new apig.RestApi(this, "AppApi", {
