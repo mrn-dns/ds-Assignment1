@@ -2,7 +2,7 @@ import { Team, Driver } from "../shared/types";
 
 export const teams: Team[] = [
   {
-    id: 1,
+    teamId: 1,
     name: "Red Bull Racing",
     base: "Milton Keynes, United Kingdom",
     teamPrincipal: "Christian Horner",
@@ -12,7 +12,7 @@ export const teams: Team[] = [
       "A leading F1 team known for its competitive performance and skilled drivers.",
   },
   {
-    id: 2,
+    teamId: 2,
     name: "Mercedes-AMG Petronas Formula One Team",
     base: "Brackley, United Kingdom",
     teamPrincipal: "Toto Wolff",
@@ -22,7 +22,7 @@ export const teams: Team[] = [
       "A dominant force in F1, holding multiple championship titles in recent years.",
   },
   {
-    id: 3,
+    teamId: 3,
     name: "Scuderia Ferrari",
     base: "Maranello, Italy",
     teamPrincipal: "Fred Vasseur",
@@ -31,7 +31,7 @@ export const teams: Team[] = [
     description: "One of the oldest and most iconic teams in F1 history.",
   },
   {
-    id: 4,
+    teamId: 4,
     name: "McLaren Racing",
     base: "Woking, United Kingdom",
     teamPrincipal: "Zak Brown",
@@ -41,7 +41,7 @@ export const teams: Team[] = [
       "A British team known for its legacy and innovation in motorsport.",
   },
   {
-    id: 5,
+    teamId: 5,
     name: "Aston Martin Aramco Cognizant Formula One Team",
     base: "Silverstone, United Kingdom",
     teamPrincipal: "Mike Krack",
@@ -51,7 +51,7 @@ export const teams: Team[] = [
       "A recently formed team with ambitions to compete among the best in F1.",
   },
   {
-    id: 6,
+    teamId: 6,
     name: "Alpine F1 Team",
     base: "Enstone, United Kingdom",
     teamPrincipal: "Otmar Szafnauer",
@@ -63,7 +63,7 @@ export const teams: Team[] = [
 
 export const drivers: Driver[] = [
   {
-    id: 1,
+    driverId: 1,
     teamId: 1,
     name: "Max Verstappen",
     nationality: "Dutch",
@@ -74,7 +74,7 @@ export const drivers: Driver[] = [
       "A talented driver known for his aggressive racing style and multiple championships.",
   },
   {
-    id: 2,
+    driverId: 2,
     teamId: 1,
     name: "Sergio Pérez",
     nationality: "Mexican",
@@ -85,7 +85,7 @@ export const drivers: Driver[] = [
       "A skilled driver from Mexico with a reputation for consistency and strategic racing.",
   },
   {
-    id: 3,
+    driverId: 3,
     teamId: 2,
     name: "Lewis Hamilton",
     nationality: "British",
@@ -96,7 +96,7 @@ export const drivers: Driver[] = [
       "One of the most successful drivers in F1 history, known for his record championships.",
   },
   {
-    id: 4,
+    driverId: 4,
     teamId: 2,
     name: "George Russell",
     nationality: "British",
@@ -107,7 +107,7 @@ export const drivers: Driver[] = [
       "A rising star in F1 known for his skills and potential for future championships.",
   },
   {
-    id: 5,
+    driverId: 5,
     teamId: 3,
     name: "Charles Leclerc",
     nationality: "Monégasque",
@@ -118,7 +118,7 @@ export const drivers: Driver[] = [
       "An accomplished driver from Monaco with impressive performance and potential.",
   },
   {
-    id: 6,
+    driverId: 6,
     teamId: 3,
     name: "Carlos Sainz",
     nationality: "Spanish",
@@ -129,7 +129,7 @@ export const drivers: Driver[] = [
       "A skillful Spanish driver known for his strategic approach and consistency.",
   },
   {
-    id: 7,
+    driverId: 7,
     teamId: 4,
     name: "Lando Norris",
     nationality: "British",
@@ -140,7 +140,7 @@ export const drivers: Driver[] = [
       "A young, popular driver from the UK with a promising career in F1.",
   },
   {
-    id: 8,
+    driverId: 8,
     teamId: 4,
     name: "Oscar Piastri",
     nationality: "Australian",
@@ -151,7 +151,7 @@ export const drivers: Driver[] = [
       "An Australian driver regarded for his talent and competitive spirit.",
   },
   {
-    id: 9,
+    driverId: 9,
     teamId: 5,
     name: "Fernando Alonso",
     nationality: "Spanish",
@@ -162,7 +162,7 @@ export const drivers: Driver[] = [
       "A veteran driver with multiple championships and extensive experience in F1.",
   },
   {
-    id: 10,
+    driverId: 10,
     teamId: 5,
     name: "Lance Stroll",
     nationality: "Canadian",
@@ -173,7 +173,7 @@ export const drivers: Driver[] = [
       "A Canadian driver with determination and a drive for success in F1.",
   },
   {
-    id: 11,
+    driverId: 11,
     teamId: 6,
     name: "Pierre Gasly",
     nationality: "French",
@@ -184,7 +184,7 @@ export const drivers: Driver[] = [
       "A resilient French driver known for his perseverance and passion for racing.",
   },
   {
-    id: 12,
+    driverId: 12,
     teamId: 6,
     name: "Esteban Ocon",
     nationality: "French",
