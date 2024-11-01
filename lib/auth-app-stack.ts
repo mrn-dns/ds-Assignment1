@@ -5,6 +5,7 @@ import { AuthApi } from "./auth-api";
 import { AppApi } from "./app-api";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as custom from "aws-cdk-lib/custom-resources";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import { drivers, teams } from "../seed/teams";
 import { generateBatch } from "../shared/util";
 
@@ -50,6 +51,19 @@ export class AuthAppStack extends cdk.Stack {
         resources: [teamsTable.tableArn, driversTable.tableArn],
       }),
     });
+
+    // Added lambdaprops to a variable to avoid repetation and keep code clean
+    const commonLambdaProps = {
+      architecture: lambda.Architecture.ARM_64,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      runtime: lambda.Runtime.NODEJS_16_X,
+      environment: {
+        TEAMS_TABLE: teamsTable.tableName,
+        DRIVERS_TABLE: driversTable.tableName,
+        REGION: "eu-west-1",
+      },
+    };
 
     const userPool = new UserPool(this, "UserPool", {
       signInAliases: { username: true, email: true },
