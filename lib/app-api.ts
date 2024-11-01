@@ -15,6 +15,21 @@ export class AppApi extends Construct {
   constructor(scope: Construct, id: string, props: AppApiProps) {
     super(scope, id);
 
+    // Teams table
+    const teamsTable = new dynamodb.Table(this, "TeamsTable", {
+      partitionKey: { name: "teamId", type: dynamodb.AttributeType.NUMBER },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+    });
+
+    // Drivers table
+    const driversTable = new dynamodb.Table(this, "DriversTable", {
+      partitionKey: { name: "teamId", type: dynamodb.AttributeType.NUMBER },
+      sortKey: { name: "driverId", type: dynamodb.AttributeType.NUMBER },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+    });
+
     const appApi = new apig.RestApi(this, "AppApi", {
       description: "App RestApi",
       endpointTypes: [apig.EndpointType.REGIONAL],
