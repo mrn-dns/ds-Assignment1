@@ -52,19 +52,6 @@ export class AuthAppStack extends cdk.Stack {
       }),
     });
 
-    // Added lambdaprops to a variable to avoid repetation and keep code clean
-    const commonLambdaProps = {
-      architecture: lambda.Architecture.ARM_64,
-      timeout: cdk.Duration.seconds(10),
-      memorySize: 128,
-      runtime: lambda.Runtime.NODEJS_16_X,
-      environment: {
-        TEAMS_TABLE: teamsTable.tableName,
-        DRIVERS_TABLE: driversTable.tableName,
-        REGION: "eu-west-1",
-      },
-    };
-
     const userPool = new UserPool(this, "UserPool", {
       signInAliases: { username: true, email: true },
       selfSignUpEnabled: true,
@@ -87,6 +74,8 @@ export class AuthAppStack extends cdk.Stack {
     new AppApi(this, "AppApi", {
       userPoolId: userPoolId,
       userPoolClientId: userPoolClientId,
+      teamsTable: teamsTable,
+      driversTable: driversTable,
     });
   }
 }

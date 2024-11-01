@@ -1,6 +1,7 @@
 import { Aws } from "aws-cdk-lib";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apig from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as node from "aws-cdk-lib/aws-lambda-nodejs";
@@ -8,11 +9,26 @@ import * as node from "aws-cdk-lib/aws-lambda-nodejs";
 type AppApiProps = {
   userPoolId: string;
   userPoolClientId: string;
+  teamsTable: dynamodb.Table;
+  driversTable: dynamodb.Table;
 };
 
 export class AppApi extends Construct {
   constructor(scope: Construct, id: string, props: AppApiProps) {
     super(scope, id);
+
+    // Added lambdaprops to a variable to avoid repetation and keep code clean
+    const commonLambdaProps = {
+      architecture: lambda.Architecture.ARM_64,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      runtime: lambda.Runtime.NODEJS_16_X,
+      environment: {
+        TEAMS_TABLE: props.teamsTable,
+        DRIVERS_TABLE: props.driversTable,
+        REGION: "eu-west-1",
+      },
+    };
 
     const appApi = new apig.RestApi(this, "AppApi", {
       description: "App RestApi",
