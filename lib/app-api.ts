@@ -4,7 +4,7 @@ import { Construct } from "constructs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apig from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as node from "aws-cdk-lib/aws-lambda-nodejs";
+import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
 
 type AppApiProps = {
   userPoolId: string;
@@ -16,19 +16,6 @@ type AppApiProps = {
 export class AppApi extends Construct {
   constructor(scope: Construct, id: string, props: AppApiProps) {
     super(scope, id);
-
-    // Added lambdaprops to a variable to avoid repetation and keep code clean
-    // const commonLambdaProps = {
-    //   architecture: lambda.Architecture.ARM_64,
-    //   timeout: cdk.Duration.seconds(10),
-    //   memorySize: 128,
-    //   runtime: lambda.Runtime.NODEJS_16_X,
-    //   environment: {
-    //     TEAMS_TABLE: props.teamsTable,
-    //     DRIVERS_TABLE: props.driversTable,
-    //     REGION: "eu-west-1",
-    //   },
-    // };
 
     const appApi = new apig.RestApi(this, "AppApi", {
       description: "Formula 1 App RestApi",
@@ -53,21 +40,34 @@ export class AppApi extends Construct {
       },
     };
 
+    // APP FUNCTIONS
+
+    // `getTeamFn` Lambda function
+    const getTeamFn = new lambdanode.NodejsFunction(this, "GetTeamFn", {
+      ...appCommonFnProps,
+      entry: "./lambda/app-api/teams/getTeamById.ts",
+    });
+    props.teamsTable.grantReadData(getTeamFn);
+    props.driversTable.grantReadData(getTeamFn);
+
+    const teamsEndpoint = appApi.root.addResource("teams");
+    const teamByIdEndpoint = teamsEndpoint.addResource("{teamId}");
+
     const protectedRes = appApi.root.addResource("protected");
 
     const publicRes = appApi.root.addResource("public");
 
-    const protectedFn = new node.NodejsFunction(this, "ProtectedFn", {
+    const protectedFn = new lambdanode.NodejsFunction(this, "ProtectedFn", {
       ...appCommonFnProps,
       entry: "./lambda/protected.ts",
     });
 
-    const publicFn = new node.NodejsFunction(this, "PublicFn", {
+    const publicFn = new lambdanode.NodejsFunction(this, "PublicFn", {
       ...appCommonFnProps,
       entry: "./lambda/public.ts",
     });
 
-    const authorizerFn = new node.NodejsFunction(this, "AuthorizerFn", {
+    const authorizerFn = new lambdanode.NodejsFunction(this, "AuthorizerFn", {
       ...appCommonFnProps,
       entry: "./lambda/auth/authorizer.ts",
     });
@@ -88,5 +88,10 @@ export class AppApi extends Construct {
     });
 
     publicRes.addMethod("GET", new apig.LambdaIntegration(publicFn));
+
+    teamByIdEndpoint.addMethod("GET", new apig.LambdaIntegration(getTeamFn), {
+      authorizer: requestAuthorizer,
+      authorizationType: apig.AuthorizationType.CUSTOM,
+    });
   }
 }
