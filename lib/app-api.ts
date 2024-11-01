@@ -21,6 +21,9 @@ export class AppApi extends Construct {
       description: "Formula 1 App RestApi",
       endpointTypes: [apig.EndpointType.REGIONAL],
       defaultCorsPreflightOptions: {
+        allowHeaders: ["Content-Type", "X-Amz-Date"],
+        allowMethods: ["OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"],
+        allowCredentials: true,
         allowOrigins: apig.Cors.ALL_ORIGINS,
       },
     });
@@ -43,15 +46,22 @@ export class AppApi extends Construct {
     // APP FUNCTIONS
 
     // `getTeamFn` Lambda function
+    const teamsEndpoint = appApi.root.addResource("teams");
+    const teamByIdEndpoint = teamsEndpoint.addResource("{teamId}");
     const getTeamFn = new lambdanode.NodejsFunction(this, "GetTeamFn", {
       ...appCommonFnProps,
       entry: "./lambda/app-api/teams/getTeamById.ts",
     });
+
+    const addTeamFn = new lambdanode.NodejsFunction(this, "AddTeamFn", {
+      ...appCommonFnProps,
+      entry: "./lambda/app-api/teams/addTeam.ts",
+    });
+
+    // PERMISSIONS
+    props.teamsTable.grantReadWriteData(addTeamFn);
     props.teamsTable.grantReadData(getTeamFn);
     props.driversTable.grantReadData(getTeamFn);
-
-    const teamsEndpoint = appApi.root.addResource("teams");
-    const teamByIdEndpoint = teamsEndpoint.addResource("{teamId}");
 
     const protectedRes = appApi.root.addResource("protected");
 
@@ -89,9 +99,21 @@ export class AppApi extends Construct {
 
     publicRes.addMethod("GET", new apig.LambdaIntegration(publicFn));
 
-    teamByIdEndpoint.addMethod("GET", new apig.LambdaIntegration(getTeamFn), {
-      authorizer: requestAuthorizer,
-      authorizationType: apig.AuthorizationType.CUSTOM,
-    });
+    teamByIdEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getTeamFn, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    teamsEndpoint.addMethod(
+      "POST",
+      new apig.LambdaIntegration(addTeamFn, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
   }
 }
