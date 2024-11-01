@@ -8,6 +8,8 @@ export const teams: Team[] = [
     teamPrincipal: "Christian Horner",
     worldChampionships: 6,
     founded: 2005,
+    description:
+      "A leading F1 team known for its competitive performance and skilled drivers.",
   },
   {
     id: 2,
@@ -16,6 +18,8 @@ export const teams: Team[] = [
     teamPrincipal: "Toto Wolff",
     worldChampionships: 8,
     founded: 2010,
+    description:
+      "A dominant force in F1, holding multiple championship titles in recent years.",
   },
   {
     id: 3,
@@ -24,6 +28,7 @@ export const teams: Team[] = [
     teamPrincipal: "Fred Vasseur",
     worldChampionships: 16,
     founded: 1950,
+    description: "One of the oldest and most iconic teams in F1 history.",
   },
   {
     id: 4,
@@ -32,6 +37,8 @@ export const teams: Team[] = [
     teamPrincipal: "Zak Brown",
     worldChampionships: 8,
     founded: 1966,
+    description:
+      "A British team known for its legacy and innovation in motorsport.",
   },
   {
     id: 5,
@@ -40,6 +47,8 @@ export const teams: Team[] = [
     teamPrincipal: "Mike Krack",
     worldChampionships: 0,
     founded: 2021,
+    description:
+      "A recently formed team with ambitions to compete among the best in F1.",
   },
   {
     id: 6,
@@ -48,6 +57,7 @@ export const teams: Team[] = [
     teamPrincipal: "Otmar Szafnauer",
     worldChampionships: 2,
     founded: 1981,
+    description: "A rebranded French team with a history in F1 racing.",
   },
 ];
 
@@ -60,6 +70,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1997-09-30",
     championshipsWon: 3,
     carNumber: 33,
+    description:
+      "A talented driver known for his aggressive racing style and multiple championships.",
   },
   {
     id: 2,
@@ -69,6 +81,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1990-01-26",
     championshipsWon: 0,
     carNumber: 11,
+    description:
+      "A skilled driver from Mexico with a reputation for consistency and strategic racing.",
   },
   {
     id: 3,
@@ -78,6 +92,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1985-01-07",
     championshipsWon: 7,
     carNumber: 44,
+    description:
+      "One of the most successful drivers in F1 history, known for his record championships.",
   },
   {
     id: 4,
@@ -87,6 +103,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1998-02-15",
     championshipsWon: 0,
     carNumber: 63,
+    description:
+      "A rising star in F1 known for his skills and potential for future championships.",
   },
   {
     id: 5,
@@ -96,6 +114,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1997-10-16",
     championshipsWon: 0,
     carNumber: 16,
+    description:
+      "An accomplished driver from Monaco with impressive performance and potential.",
   },
   {
     id: 6,
@@ -105,6 +125,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1994-09-01",
     championshipsWon: 0,
     carNumber: 55,
+    description:
+      "A skillful Spanish driver known for his strategic approach and consistency.",
   },
   {
     id: 7,
@@ -114,6 +136,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1999-11-13",
     championshipsWon: 0,
     carNumber: 4,
+    description:
+      "A young, popular driver from the UK with a promising career in F1.",
   },
   {
     id: 8,
@@ -123,6 +147,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "2001-04-06",
     championshipsWon: 0,
     carNumber: 81,
+    description:
+      "An Australian driver regarded for his talent and competitive spirit.",
   },
   {
     id: 9,
@@ -132,6 +158,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1981-07-29",
     championshipsWon: 2,
     carNumber: 14,
+    description:
+      "A veteran driver with multiple championships and extensive experience in F1.",
   },
   {
     id: 10,
@@ -141,6 +169,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1998-10-29",
     championshipsWon: 0,
     carNumber: 18,
+    description:
+      "A Canadian driver with determination and a drive for success in F1.",
   },
   {
     id: 11,
@@ -150,6 +180,8 @@ export const drivers: Driver[] = [
     dateOfBirth: "1996-02-07",
     championshipsWon: 0,
     carNumber: 10,
+    description:
+      "A resilient French driver known for his perseverance and passion for racing.",
   },
   {
     id: 12,
@@ -159,5 +191,7 @@ export const drivers: Driver[] = [
     dateOfBirth: "1996-09-17",
     championshipsWon: 0,
     carNumber: 31,
+    description:
+      "A talented French driver with a steady rise in the competitive world of F1.",
   },
 ];
