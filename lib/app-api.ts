@@ -18,20 +18,20 @@ export class AppApi extends Construct {
     super(scope, id);
 
     // Added lambdaprops to a variable to avoid repetation and keep code clean
-    const commonLambdaProps = {
-      architecture: lambda.Architecture.ARM_64,
-      timeout: cdk.Duration.seconds(10),
-      memorySize: 128,
-      runtime: lambda.Runtime.NODEJS_16_X,
-      environment: {
-        TEAMS_TABLE: props.teamsTable,
-        DRIVERS_TABLE: props.driversTable,
-        REGION: "eu-west-1",
-      },
-    };
+    // const commonLambdaProps = {
+    //   architecture: lambda.Architecture.ARM_64,
+    //   timeout: cdk.Duration.seconds(10),
+    //   memorySize: 128,
+    //   runtime: lambda.Runtime.NODEJS_16_X,
+    //   environment: {
+    //     TEAMS_TABLE: props.teamsTable,
+    //     DRIVERS_TABLE: props.driversTable,
+    //     REGION: "eu-west-1",
+    //   },
+    // };
 
     const appApi = new apig.RestApi(this, "AppApi", {
-      description: "App RestApi",
+      description: "Formula 1 App RestApi",
       endpointTypes: [apig.EndpointType.REGIONAL],
       defaultCorsPreflightOptions: {
         allowOrigins: apig.Cors.ALL_ORIGINS,
@@ -45,6 +45,8 @@ export class AppApi extends Construct {
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: "handler",
       environment: {
+        TEAMS_TABLE: props.teamsTable.tableName,
+        DRIVERS_TABLE: props.driversTable.tableName,
         USER_POOL_ID: props.userPoolId,
         CLIENT_ID: props.userPoolClientId,
         REGION: cdk.Aws.REGION,
