@@ -67,11 +67,19 @@ export class AppApi extends Construct {
       entry: "./lambda/app-api/addTeam.ts",
     });
 
+    // deleteTeam and associated drivers
+    const deleteTeamFn = new lambdanode.NodejsFunction(this, "DeleteTeamFn", {
+      ...appCommonFnProps,
+      entry: "./lambda/app-api/deleteTeam.ts",
+    });
+
     // PERMISSIONS
     props.teamsTable.grantReadData(getAllTeams);
     props.teamsTable.grantReadData(getTeamFn);
     props.driversTable.grantReadData(getTeamFn);
     props.teamsTable.grantReadWriteData(addTeamFn);
+    props.teamsTable.grantReadWriteData(deleteTeamFn);
+    props.driversTable.grantReadWriteData(deleteTeamFn);
 
     const protectedRes = appApi.root.addResource("protected");
 
@@ -128,6 +136,14 @@ export class AppApi extends Construct {
     teamsEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getAllTeams, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    teamByIdEndpoint.addMethod(
+      "DELETE",
+      new apig.LambdaIntegration(deleteTeamFn, { proxy: true }),
       {
         authorizer: requestAuthorizer,
         authorizationType: apig.AuthorizationType.CUSTOM,
