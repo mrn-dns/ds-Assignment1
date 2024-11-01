@@ -5,6 +5,7 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apig from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
+import { get } from "http";
 
 type AppApiProps = {
   userPoolId: string;
@@ -45,23 +46,32 @@ export class AppApi extends Construct {
 
     // APP FUNCTIONS
 
-    // `getTeamFn` Lambda function
+    // getAllTeams
     const teamsEndpoint = appApi.root.addResource("teams");
-    const teamByIdEndpoint = teamsEndpoint.addResource("{teamId}");
-    const getTeamFn = new lambdanode.NodejsFunction(this, "GetTeamFn", {
+    const getAllTeams = new lambdanode.NodejsFunction(this, "GetAllTeamsFn", {
       ...appCommonFnProps,
-      entry: "./lambda/app-api/teams/getTeamById.ts",
+      entry: "./lambda/app-api/getAllTeams.ts",
     });
 
+    // getTeamById
+    const teamEndpoint = appApi.root.addResource("team");
+    const teamByIdEndpoint = teamEndpoint.addResource("{teamId}");
+    const getTeamFn = new lambdanode.NodejsFunction(this, "GetTeamFn", {
+      ...appCommonFnProps,
+      entry: "./lambda/app-api/getTeamById.ts",
+    });
+
+    // addTeam
     const addTeamFn = new lambdanode.NodejsFunction(this, "AddTeamFn", {
       ...appCommonFnProps,
-      entry: "./lambda/app-api/teams/addTeam.ts",
+      entry: "./lambda/app-api/addTeam.ts",
     });
 
     // PERMISSIONS
-    props.teamsTable.grantReadWriteData(addTeamFn);
+    props.teamsTable.grantReadData(getAllTeams);
     props.teamsTable.grantReadData(getTeamFn);
     props.driversTable.grantReadData(getTeamFn);
+    props.teamsTable.grantReadWriteData(addTeamFn);
 
     const protectedRes = appApi.root.addResource("protected");
 
@@ -107,9 +117,17 @@ export class AppApi extends Construct {
         authorizationType: apig.AuthorizationType.CUSTOM,
       }
     );
-    teamsEndpoint.addMethod(
+    teamEndpoint.addMethod(
       "POST",
       new apig.LambdaIntegration(addTeamFn, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    teamsEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getAllTeams, { proxy: true }),
       {
         authorizer: requestAuthorizer,
         authorizationType: apig.AuthorizationType.CUSTOM,
