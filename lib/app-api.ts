@@ -5,7 +5,6 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apig from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
-import { get } from "http";
 
 type AppApiProps = {
   userPoolId: string;
@@ -91,6 +90,16 @@ export class AppApi extends Construct {
       entry: "./lambda/app-api/deleteTeam.ts",
     });
 
+    // getDriverById
+    const driverEndpoint = appApi.root.addResource("driver");
+    const driverByIdEndpoint = driverEndpoint
+      .addResource("{teamId}")
+      .addResource("{driverId}");
+    const getDriverFn = new lambdanode.NodejsFunction(this, "GetDriverById", {
+      ...appCommonFnProps,
+      entry: "./lambda/app-api/getDriverById.ts",
+    });
+
     // PERMISSIONS
     props.teamsTable.grantReadData(getAllTeams);
     props.teamsTable.grantReadData(getTeamFn);
@@ -100,6 +109,8 @@ export class AppApi extends Construct {
     props.teamsTable.grantWriteData(updateTeamFn);
     props.teamsTable.grantReadWriteData(deleteTeamFn);
     props.driversTable.grantReadWriteData(deleteTeamFn);
+    props.driversTable.grantReadData(getDriverFn);
+    props.teamsTable.grantReadData(getDriverFn);
 
     const protectedRes = appApi.root.addResource("protected");
 
@@ -186,6 +197,15 @@ export class AppApi extends Construct {
     teamByIdEndpoint.addMethod(
       "DELETE",
       new apig.LambdaIntegration(deleteTeamFn, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    // Get a driver by id
+    driverByIdEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getDriverFn, { proxy: true }),
       {
         authorizer: requestAuthorizer,
         authorizationType: apig.AuthorizationType.CUSTOM,
