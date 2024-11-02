@@ -52,7 +52,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       await Promise.all(deleteDriverPromises);
     }
 
-    // Step 3: Delete the team from the teams table
+    // Delete the team from the teams table
     await ddbDocClient.send(
       new DeleteCommand({
         TableName: process.env.TEAMS_TABLE,

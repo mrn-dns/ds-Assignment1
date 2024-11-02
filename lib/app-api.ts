@@ -67,6 +67,24 @@ export class AppApi extends Construct {
       entry: "./lambda/app-api/addTeam.ts",
     });
 
+    // updateTeamDescription
+    const updateTeamDescriptionEndpoint =
+      teamByIdEndpoint.addResource("updateDescription");
+    const updateTeamDescriptionFn = new lambdanode.NodejsFunction(
+      this,
+      "UpdateTeamDescriptionFn",
+      {
+        ...appCommonFnProps,
+        entry: "./lambda/app-api/updateTeamDescription.ts",
+      }
+    );
+
+    // updateTeam
+    const updateTeamFn = new lambdanode.NodejsFunction(this, "UpdateTeamFn", {
+      ...appCommonFnProps,
+      entry: "./lambda/app-api/updateTeam.ts",
+    });
+
     // deleteTeam and associated drivers
     const deleteTeamFn = new lambdanode.NodejsFunction(this, "DeleteTeamFn", {
       ...appCommonFnProps,
@@ -78,6 +96,8 @@ export class AppApi extends Construct {
     props.teamsTable.grantReadData(getTeamFn);
     props.driversTable.grantReadData(getTeamFn);
     props.teamsTable.grantReadWriteData(addTeamFn);
+    props.teamsTable.grantWriteData(updateTeamDescriptionFn);
+    props.teamsTable.grantWriteData(updateTeamFn);
     props.teamsTable.grantReadWriteData(deleteTeamFn);
     props.driversTable.grantReadWriteData(deleteTeamFn);
 
@@ -136,6 +156,22 @@ export class AppApi extends Construct {
     teamsEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getAllTeams, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    updateTeamDescriptionEndpoint.addMethod(
+      "PATCH",
+      new apig.LambdaIntegration(updateTeamDescriptionFn, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    teamByIdEndpoint.addMethod(
+      "PUT",
+      new apig.LambdaIntegration(updateTeamFn),
       {
         authorizer: requestAuthorizer,
         authorizationType: apig.AuthorizationType.CUSTOM,
