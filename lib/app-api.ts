@@ -137,6 +137,7 @@ export class AppApi extends Construct {
 
     publicRes.addMethod("GET", new apig.LambdaIntegration(publicFn));
 
+    // Getting a team by its Id
     teamByIdEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getTeamFn, { proxy: true }),
@@ -145,6 +146,7 @@ export class AppApi extends Construct {
         authorizationType: apig.AuthorizationType.CUSTOM,
       }
     );
+    // Add a team
     teamEndpoint.addMethod(
       "POST",
       new apig.LambdaIntegration(addTeamFn, { proxy: true }),
@@ -153,6 +155,7 @@ export class AppApi extends Construct {
         authorizationType: apig.AuthorizationType.CUSTOM,
       }
     );
+    // Get all teams
     teamsEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getAllTeams, { proxy: true }),
@@ -161,6 +164,7 @@ export class AppApi extends Construct {
         authorizationType: apig.AuthorizationType.CUSTOM,
       }
     );
+    // Update the description of a team
     updateTeamDescriptionEndpoint.addMethod(
       "PATCH",
       new apig.LambdaIntegration(updateTeamDescriptionFn, { proxy: true }),
@@ -169,6 +173,7 @@ export class AppApi extends Construct {
         authorizationType: apig.AuthorizationType.CUSTOM,
       }
     );
+    // Update an entire team
     teamByIdEndpoint.addMethod(
       "PUT",
       new apig.LambdaIntegration(updateTeamFn),
@@ -177,6 +182,7 @@ export class AppApi extends Construct {
         authorizationType: apig.AuthorizationType.CUSTOM,
       }
     );
+    // Delete a team and related drivers
     teamByIdEndpoint.addMethod(
       "DELETE",
       new apig.LambdaIntegration(deleteTeamFn, { proxy: true }),
