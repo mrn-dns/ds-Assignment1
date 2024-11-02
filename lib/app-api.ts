@@ -4,6 +4,7 @@ import { Construct } from "constructs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apig from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
 
 type AppApiProps = {
@@ -11,6 +12,7 @@ type AppApiProps = {
   userPoolClientId: string;
   teamsTable: dynamodb.Table;
   driversTable: dynamodb.Table;
+  translationsTable: dynamodb.Table;
 };
 
 export class AppApi extends Construct {
@@ -100,6 +102,28 @@ export class AppApi extends Construct {
       entry: "./lambda/app-api/getDriverById.ts",
     });
 
+    // getTranslation
+    const teamTranslationEndpoint = teamByIdEndpoint.addResource("translation");
+    const getTranslatedDescriptionFn = new lambdanode.NodejsFunction(
+      this,
+      "GetTranslatedDescriptionFn",
+      {
+        ...appCommonFnProps,
+        entry: "./lambda/app-api/getTranslatedDescription.ts",
+        environment: {
+          ...appCommonFnProps.environment,
+          TRANSLATIONS_TABLE: props.translationsTable.tableName,
+        },
+      }
+    );
+
+    // Explicitly specifying IAM permissions for translation feature
+    const translatePolicyStatement = new iam.PolicyStatement({
+      actions: ["translate:TranslateText"],
+      resources: ["*"],
+    });
+    getTranslatedDescriptionFn.addToRolePolicy(translatePolicyStatement);
+
     // PERMISSIONS
     props.teamsTable.grantReadData(getAllTeams);
     props.teamsTable.grantReadData(getTeamFn);
@@ -111,6 +135,8 @@ export class AppApi extends Construct {
     props.driversTable.grantReadWriteData(deleteTeamFn);
     props.driversTable.grantReadData(getDriverFn);
     props.teamsTable.grantReadData(getDriverFn);
+    props.translationsTable.grantReadWriteData(getTranslatedDescriptionFn);
+    props.teamsTable.grantReadData(getTranslatedDescriptionFn);
 
     const protectedRes = appApi.root.addResource("protected");
 
@@ -206,6 +232,15 @@ export class AppApi extends Construct {
     driverByIdEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getDriverFn, { proxy: true }),
+      {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
+    );
+    // Get the translation of a team description
+    teamTranslationEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getTranslatedDescriptionFn, { proxy: true }),
       {
         authorizer: requestAuthorizer,
         authorizationType: apig.AuthorizationType.CUSTOM,

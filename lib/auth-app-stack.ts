@@ -32,6 +32,18 @@ export class AuthAppStack extends cdk.Stack {
       tableName: "Drivers",
     });
 
+    // Translations table
+    const translationsTable = new dynamodb.Table(this, "TranslationsTable", {
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      partitionKey: {
+        name: "OriginalText",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: { name: "TargetLanguage", type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      tableName: "Translations",
+    });
+
     // MARSHALLING DATA FOR TABLES
     new custom.AwsCustomResource(this, "TeamsTableInitData", {
       onCreate: {
@@ -76,6 +88,7 @@ export class AuthAppStack extends cdk.Stack {
       userPoolClientId: userPoolClientId,
       teamsTable: teamsTable,
       driversTable: driversTable,
+      translationsTable: translationsTable,
     });
   }
 }
