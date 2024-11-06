@@ -177,11 +177,7 @@ export class AppApi extends Construct {
     // Getting a team by its Id
     teamByIdEndpoint.addMethod(
       "GET",
-      new apig.LambdaIntegration(getTeamFn, { proxy: true }),
-      {
-        authorizer: requestAuthorizer,
-        authorizationType: apig.AuthorizationType.CUSTOM,
-      }
+      new apig.LambdaIntegration(getTeamFn, { proxy: true })
     );
     // Add a team
     teamEndpoint.addMethod(
@@ -195,11 +191,7 @@ export class AppApi extends Construct {
     // Get all teams
     teamsEndpoint.addMethod(
       "GET",
-      new apig.LambdaIntegration(getAllTeams, { proxy: true }),
-      {
-        authorizer: requestAuthorizer,
-        authorizationType: apig.AuthorizationType.CUSTOM,
-      }
+      new apig.LambdaIntegration(getAllTeams, { proxy: true })
     );
     // Update the description of a team
     updateTeamDescriptionEndpoint.addMethod(
@@ -231,20 +223,12 @@ export class AppApi extends Construct {
     // Get a driver by id
     driverByIdEndpoint.addMethod(
       "GET",
-      new apig.LambdaIntegration(getDriverFn, { proxy: true }),
-      {
-        authorizer: requestAuthorizer,
-        authorizationType: apig.AuthorizationType.CUSTOM,
-      }
+      new apig.LambdaIntegration(getDriverFn, { proxy: true })
     );
     // Get the translation of a team description
     teamTranslationEndpoint.addMethod(
       "GET",
-      new apig.LambdaIntegration(getTranslatedDescriptionFn, { proxy: true }),
-      {
-        authorizer: requestAuthorizer,
-        authorizationType: apig.AuthorizationType.CUSTOM,
-      }
+      new apig.LambdaIntegration(getTranslatedDescriptionFn, { proxy: true })
     );
   }
 }
