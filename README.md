@@ -10,7 +10,7 @@ The context I chose for my web API is Formula 1. I have 3 Dynamo DB tables and t
 
 - <ins>Team Table:</ins> teamId(Int), name(String), base(String), teamPrincipal(String), worldChampionships(Int), founded(Int), description(String)
 - <ins>Driver Table:</ins> driverId(Int), teamId(Int), name(String), nationality(String), dateOfBirth(String), championshipsWon(Int), carNumber(Int), description(String)
-- <ins>Translation Table:</ins> OriginalText(String), TargetLanguage(String), Translations(String)
+- <ins>Translation Table:</ins> OriginalText(String), TargetLanguage(String), TranslatedText(String)
 
 ### App API endpoints.
 
@@ -26,14 +26,22 @@ The context I chose for my web API is Formula 1. I have 3 Dynamo DB tables and t
 
 ### Update constraint (if relevant).
 
-[Briefly explain your design for the solution to the PUT/Update constraint
-
-- only the user who added an item to the main table could update it.]
+No constraint added.
 
 ### Translation persistence (if relevant).
 
-[Briefly explain your design for the solution to avoid repeat requests to Amazon Translate - persist translations so that Amazon Translate can be bypassed for repeat translation requests.]
+To make the translation process persistent, I have created a DynamoDB table for the resulted translations from the team descriptions. This table stores the original text of the description, the language in which the user wishes to translate and the result of the translation.
+
+To make Amazon Translate calls persistent and avoid repeated requests, I check before doing the translation to see if a translation already exists for the given OriginalText and TargetLanguage. If the translation does not exist in the table, Amazon Translate is called and retrieves the translated text, storing it in the table. On the next calls for translation for the same text in the same language that is already existent, the function directly returns the cached translation from DynamoDB.
 
 ### Extra (If relevant).
 
-[ State whether you have created a multi-stack solution for this assignment or used lambda layers to speed up update deployments. Also, mention any aspect of the CDK framework __that was not covered in the lectures that you used in this assignment. ]
+I have created a multi-stack solution for this assignment by separating the concerns of each stack. I have 3 stacks: app-api, auth-api and auth-app-stack.
+
+App-api is responsible with provisioning the lambda functions related to the functionality of the application. This is where the functions are attributed permissions to the tables and routes linked with GET/POST/PUT/PATCH methods are created.
+
+Auth-api has the same responsibilities as app-api but for the authentication lambda functions.
+
+Auth-app-stack is where the DynamoDB tables are defined and provisioned, data is marshalled, the user pool is created and the two APIs, app-api and auth-api are defined.
+
+The lambda functions that define the functionality of the auth=api and the app-api are located in a lambda folder which has 2 subfolders: app-api and auth. App-api contains all lambda functions associated with the Formula 1 drivers and teams and auth contains all lambda functions associated with the authentication api.

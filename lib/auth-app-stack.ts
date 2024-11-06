@@ -5,7 +5,6 @@ import { AuthApi } from "./auth-api";
 import { AppApi } from "./app-api";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as custom from "aws-cdk-lib/custom-resources";
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import { drivers, teams } from "../seed/teams";
 import { generateBatch } from "../shared/util";
 
