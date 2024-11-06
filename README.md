@@ -6,7 +6,7 @@
 
 ### Context.
 
-The context I chose for my web API is Formula 1. I have 3 Dynamo DB tables and they are the following:
+The context I chose for my web API is Formula 1. There are 6 teams and each team has 2 drivers. I have 3 Dynamo DB tables and they are the following:
 
 - <ins>Team Table:</ins> teamId(Int), name(String), base(String), teamPrincipal(String), worldChampionships(Int), founded(Int), description(String)
 - <ins>Driver Table:</ins> driverId(Int), teamId(Int), name(String), nationality(String), dateOfBirth(String), championshipsWon(Int), carNumber(Int), description(String)
@@ -14,21 +14,26 @@ The context I chose for my web API is Formula 1. I have 3 Dynamo DB tables and t
 
 ### App API endpoints.
 
-- GET /teams - Get all teams
-- GET /team/{teamId} - Get details about one specific team
-- GET /team/{teamId}?drivers=true - Get details about one specific team and the drivers associated with the team
-- GET /driver/{teamId}/{driverId} - Get specific driver details from a specific team
-- GET /team/{teamId}/translation?language={languageCode} - Get description translation of a specific team in a specifi language
-- POST /team - Add a new team
-- DEL /team/{teamId} - Delete a team by specifying teamId
-- PATCH /team/{teamId}/updateDescription - Modify one specific field, which is the team description of a specific team
-- PUT /team/5 - Modify all fields of a team
+- **GET /teams** - Get all teams
+- **GET /team/{teamId}** - Get details about one specific team
+- **GET /team/{teamId}?drivers=true** - Get details about one specific team and the drivers associated with the team
+- **GET /driver/{teamId}/{driverId}** - Get specific driver details from a specific team
+- **GET /team/{teamId}/translation?language={languageCode}** - Get description translation of a specific team in a specifi language
+- **POST /team** - Add a new team
+- **DEL /team/{teamId}** - Delete a team by specifying teamId
+- **PATCH /team/{teamId}/updateDescription** - Modify one specific field, which is the team description of a specific team
+- **PUT /team/{teamId}** - Modify all fields of a team
 
 ### Update constraint (if relevant).
 
 No constraint added.
 
 ### Translation persistence (if relevant).
+
+Tutorials I followed to implement this feature:
+
+- https://blog.tericcabrel.com/text-translation-aws-translate-nodejs/#:~:text=Using%20the%20client%20SDK%20to%20translate%20a%20text,the%20client%20instance%20by%20passing%20the%20command%20object.
+- https://www.youtube.com/watch?v=xdWpbr1DZHQ
 
 To make the translation process persistent, I have created a DynamoDB table for the resulted translations from the team descriptions. This table stores the original text of the description, the language in which the user wishes to translate and the result of the translation.
 
